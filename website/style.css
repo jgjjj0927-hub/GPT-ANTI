@@ -1,0 +1,188 @@
+:root {
+    --bg: #0a0a0a;
+    --panel: #141414;
+    --text: #ffffff;
+    --muted: #a0a0a0;
+    --accent: #00ff41; /* Неоново-зеленый */
+    --accent-dim: rgba(0, 255, 65, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.container {
+    max-width: 800px;
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid #222;
+    border-radius: 24px;
+    padding: 40px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.badge {
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.hero {
+    margin-bottom: 50px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 40px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.hero p {
+    color: var(--muted);
+    font-size: 18px;
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.features {
+    margin-bottom: 50px;
+}
+
+.nav-list {
+    list-style: none;
+}
+
+.nav-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid #222;
+    font-size: 16px;
+}
+
+.nav-list a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.nav-list a:hover {
+    opacity: 0.8;
+}
+
+.pricing {
+    margin-bottom: 50px;
+}
+
+.card {
+    border: 1px solid #222;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+    background: #111;
+    transition: border-color 0.2s;
+}
+
+.card:hover {
+    border-color: #444;
+}
+
+.card.highlight {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.card h3 {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.price {
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.card p {
+    color: var(--muted);
+}
+
+.support {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 40px;
+    background: #111;
+    border-radius: 16px;
+}
+
+.btn-contact {
+    display: inline-block;
+    margin-top: 20px;
+    background: var(--accent);
+    color: #000;
+    text-decoration: none;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 18px;
+    transition: transform 0.2s;
+}
+
+.btn-contact:hover {
+    transform: scale(1.05);
+}
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    border-top: 1px solid #222;
+    padding-top: 20px;
+}
+
+footer a {
+    color: var(--accent);
+    text-decoration: none;
+}
