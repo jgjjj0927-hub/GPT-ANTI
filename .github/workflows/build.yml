@@ -1,0 +1,107 @@
+
+name: ANTI-VURUS Build
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests and security audit
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pip-audit
+
+      - name: Compile check
+        run: python -m compileall -q .
+
+      - name: Run tests
+        run: python -m pytest tests/test.py -v
+
+      - name: Dependency security audit
+        run: pip-audit -r requirements.txt
+
+  build:
+    name: Build Windows EXE with Nuitka
+    needs: test
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka zstandard
+
+      - name: Check project files
+        shell: pwsh
+        run: |
+          $required = @(
+            "main.py",
+            "main_window.py",
+            "scan_tab.py",
+            "settings.py",
+            "licensing.py",
+            "assets/shield-2.ico"
+          )
+
+          foreach ($file in $required) {
+            if (!(Test-Path $file)) {
+              Write-Error "Required file not found: $file"
+              exit 1
+            }
+          }
+
+      - name: Build with Nuitka
+        run: |
+          python -m nuitka `
+            --standalone `
+            --onefile `
+            --enable-plugin=pyqt6 `
+            --windows-console-mode=disable `
+            --windows-icon-from-ico=assets/shield-2.ico `
+            --output-filename=ANTI-VURUS.exe `
+            --assume-yes-for-downloads `
+            --include-package=requests `
+            --include-package=watchdog `
+            --include-package=dotenv `
+            main.py
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: ANTI-VURUS-Windows
+          path: ANTI-VURUS.exe
+          if-no-files-found: error
+          retention-days: 14
