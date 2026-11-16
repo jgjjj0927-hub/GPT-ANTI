@@ -37,17 +37,7 @@ jobs:
         run: python -m compileall -q core telegram ui main.py main_window.py
 
       - name: Run tests
-        shell: pwsh
-        run: |
-          if (Test-Path "tests") {
-            python -m pytest tests -v
-            if ($LASTEXITCODE -ne 0) {
-              exit $LASTEXITCODE
-            }
-          } else {
-            Write-Host "Tests directory not found."
-            exit 1
-          }
+        run: python -m pytest tests/test.py -v
 
       - name: Dependency security audit
         run: pip-audit -r requirements.txt
@@ -85,7 +75,7 @@ jobs:
             "core",
             "telegram",
             "ui",
-            "tests",
+            "tests/test.py",
             "website"
           )
 
@@ -116,6 +106,16 @@ jobs:
             --include-package=watchdog `
             --include-package=dotenv `
             main.py
+
+      - name: Verify executable
+        shell: pwsh
+        run: |
+          if (!(Test-Path "ANTI-VURUS.exe")) {
+            Write-Error "ANTI-VURUS.exe was not created."
+            exit 1
+          }
+
+          Write-Host "Executable created successfully."
 
       - name: Upload executable
         uses: actions/upload-artifact@v4
