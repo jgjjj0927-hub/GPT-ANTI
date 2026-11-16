@@ -1,4 +1,4 @@
-""Optional Telegram admin bot. No shared password or public admin enrollment."""
+"""Optional Telegram admin bot. No shared password or public admin enrollment."""
 from __future__ import annotations
 
 import json
