@@ -1,5 +1,5 @@
 
-name: ANTI-VURUS Build
+name: ANTI-VURUS CI and Build
 
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   test:
-    name: Tests and security audit
+    name: Tests and Security Audit
     runs-on: windows-latest
 
     steps:
@@ -33,11 +33,21 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pip-audit
 
-      - name: Compile check
-        run: python -m compileall -q .
+      - name: Compile Python files
+        run: python -m compileall -q core telegram ui main.py main_window.py
 
       - name: Run tests
-        run: python -m pytest tests/test.py -v
+        shell: pwsh
+        run: |
+          if (Test-Path "tests") {
+            python -m pytest tests -v
+            if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+            }
+          } else {
+            Write-Host "Tests directory not found."
+            exit 1
+          }
 
       - name: Dependency security audit
         run: pip-audit -r requirements.txt
@@ -64,26 +74,32 @@ jobs:
           pip install -r requirements.txt
           pip install nuitka zstandard
 
-      - name: Check project files
+      - name: Check project structure
         shell: pwsh
         run: |
           $required = @(
             "main.py",
             "main_window.py",
-            "scan_tab.py",
-            "settings.py",
-            "licensing.py",
-            "assets/shield-2.ico"
+            "requirements.txt",
+            "assets/shield-2.ico",
+            "core",
+            "telegram",
+            "ui",
+            "tests",
+            "website"
           )
 
-          foreach ($file in $required) {
-            if (!(Test-Path $file)) {
-              Write-Error "Required file not found: $file"
+          foreach ($item in $required) {
+            if (!(Test-Path $item)) {
+              Write-Error "Required file or directory not found: $item"
               exit 1
             }
           }
 
+          Write-Host "Project structure OK."
+
       - name: Build with Nuitka
+        shell: pwsh
         run: |
           python -m nuitka `
             --standalone `
@@ -93,6 +109,9 @@ jobs:
             --windows-icon-from-ico=assets/shield-2.ico `
             --output-filename=ANTI-VURUS.exe `
             --assume-yes-for-downloads `
+            --include-package=core `
+            --include-package=telegram `
+            --include-package=ui `
             --include-package=requests `
             --include-package=watchdog `
             --include-package=dotenv `
